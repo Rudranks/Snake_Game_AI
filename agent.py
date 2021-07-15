@@ -9,13 +9,13 @@ from helper import plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
-LR = 0.001
+LR = 0.001  # Learning rate is a value between 0 and 1 which indicates how quick will the agent abandon a previous Q valee for a new one
 
 
 class Agent:
     def __init__(self):
         self.n_games = 0  # No of games
-        self.epsilon = 0  # Controls randomness
+        self.epsilon = 0  # Controls randomness, ie, controls exploration/exploitation
         self.gamma = 0.9  # Discount rate must be < 1
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft() is called if it exceeds memory limitation
         self.model = Liner_QNet(11, 256, 3)  # size of initial is the 11 states and output is 3 for direction
@@ -89,9 +89,11 @@ class Agent:
     def get_action(self, state):
         # Random moves in the start: trading off exploration/exploitation
         # The more games we play the smaller epsilon gets, and the smaller epsilon gets, the less random the move are
+        # This is called an epsilon greedy strategy
         self.epsilon = 80 - self.n_games
         final_move = [0,0,0]
         if random.randint(0, 200) < self.epsilon:
+            # If r < epsilon exploration is preferred over exploitation
             move = random.randint(0, 2)
             final_move[move] = 1
         else:
